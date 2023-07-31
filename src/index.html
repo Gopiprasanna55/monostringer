@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<!-- Template Name: DashCode - HTML, React, Vue, Tailwind Admin Dashboard Template Author: Codeshaper Website: https://codeshaper.net Contact: support@codeshaperbd.net Like: https://www.facebook.com/Codeshaperbd Purchase: https://themeforest.net/item/dashcode-admin-dashboard-template/42600453 License: You must have a valid license purchased only from themeforest(the above link) in order to legally use the theme for your project. -->
+<html lang="zxx" dir="ltr" class="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <title>Dashcode - HTML Template</title>
+  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'> -->
+  <!-- <link rel="icon" type="image/png" href="assets/images/logo/favicon.svg"> -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <!-- BEGIN: Theme CSS-->
+  <!-- <link rel="stylesheet" href="assets/css/rt-plugins.css"> -->
+  <!-- <link rel="stylesheet" href="./app.css"> -->
+  <!-- End : Theme CSS-->
+  <!-- <script src="assets/js/settings.js" sync></script> -->
+  <style>
+    /* body {
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    } */
+    .outputs {
+      display: flex;
+      width: 100%;
+      gap: 20px;
+      padding: 10px;
+    }
+
+    .item {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 50%;
+    }
+
+    .fields {
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+    }
+    
+  </style>
+</head>
+
+<body id="body_class">
+  <main class="app-wrapper">
+    <div>
+      <div class="content-wrapper transition-all duration-150 ltr:ml-[248px] rtl:mr-[248px]" id="content_wrapper"
+        style="margin: 0;">
+        <div class="page-content" style="padding-bottom: 10px;">
+          <div class="transition-all duration-150 container-fluid" id="page_layout">
+            <div id="content_layout">
+              <div class="dashcode-calender">
+                <div class="grid grid-cols-12 gap-4" style="height: 100%;">
+                  <div class="lg:col-span-4 col-span-12   py-0 d-flex flex-column gap-2">
+                    <div class="card xl:col-span-4">
+                      <div class="card-body flex flex-col py-0">
+                        <!-- <header class="flex items-center border-b border-slate-100 dark:border-slate-700 -mx-6 px-6">
+                          <div class="flex-1">
+                            <div class="card-title text-slate-900 dark:text-white" style="font-size: 16px;">Inputs</div>
+                          </div>
+                        </header> -->
+                        <header class="flex items-center border-b border-slate-100 dark:border-slate-700 -mx-6 p-1">
+                          <div class="flex-1">
+                            <div class="card-title text-slate-900 dark:text-white m-0"
+                              style="transform: translateX(18px);">Monostringer Inputs</div>
+                          </div>
+                        </header>
+                        <div class="card-text h-full ">
+                          <form class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 p-2">
+                              <div class="input-area relative">
+                                <label for="largeInput" class="form-label">Finished Floor To Floor</label>
+                                <input type="number" id="txtF2F" class="form-control" name="floortofloor" />
+                              </div>
+                              <div class="input-area">
+                                <label for="select" class="form-label">Header Material</label>
+                                <select id="select" class="form-control">
+                                  <option value="concreteslab" class="dark:bg-slate-700">Concrete Slab</option>
+                                  <option value="metaljoist" class="dark:bg-slate-700">Metal Joist</option>
+                                  <option value="timberjois" class="dark:bg-slate-700">Timber Joist</option>
+                                </select>
+                              </div>
+                              <div class="input-area relative">
+                                <label for="largeInput" class="form-label">Header Thickness</label>
+                                <input type="number" id="HeaderThickness" class="form-control" name="headerthickness" />
+                              </div>
+                              <div class="input-area relative">
+                                <label for="largeInput" class="form-label">Future Top Floor Covering Thickness</label>
+                                <input type="number" id="FutureTopFloorCoveringThickness" class="form-control"
+                                  name="futuretopfloorcoveringthickness" />
+
+                              </div>
+                              <div class="input-area relative">
+                                <label for="largeInput" class="form-label">Upper Subfloor Thickness</label>
+                                <input type="number" id="" class="form-control" name='uppersubfloorthickness' />
+                              </div>
+                              <div class="input-area relative">
+                                <label for="largeInput" class="form-label">Future Lower Floor Covering Thickness</label>
+                                <input type="number" id="futurelowerfloorcoveringthickness" class="form-control"
+                                  name='futurelowerfloorcoveringthickness' />
+                              </div>
+
+                              <div class="input-area relative">
+                                <label for="largeInput" class="form-label">Top Riser Thickness</label>
+                                <input type="number" id="topriserthickness" class="form-control"
+                                  name='topriserthickness' />
+                              </div>
+                              <div class="input-area relative">
+                                <label for="largeInput" class="form-label">Top Riser Packout</label>
+                                <input type="number" id="" class="form-control" name='topriserpackout' />
+
+                              </div>
+                              <div class="input-area relative">
+                                <label for="largeInput" class="form-label">Tread Length</label>
+                                <input type="number" id="treadlength" class="form-control" name='treadlength' />
+                              </div>
+                              <div class="input-area relative">
+                                <label for="largeInput" class="form-label">Tread Going</label>
+                                <input type="number" id="" class="form-control" name='treadgoing' />
+
+                              </div>
+                              <div class="input-area relative">
+                                <label for="largeInput" class="form-label">Tread Thickness</label>
+                                <input type="number" id="treadthickness" class="form-control" name='treadthickness' />
+                              </div>
+                              <div class="input-area relative">
+                                <label for="largeInput" class="form-label">Tread Overhanging</label>
+                                <input type="number" id="" class="form-control" name='treadoverhang' />
+                              </div>
+                              <div class="input-area">
+                                <label for="select" class="form-label">Bottom Treads</label>
+                                <select id="select" class="form-control">
+                                  <option value="includealltreads" class="dark:bg-slate-700">Include All Treads</option>
+                                  <option value="removebottomtread" class="dark:bg-slate-700">Remove Bottom Tread
+                                  </option>
+                                  <option value="removebottom2tread" class="dark:bg-slate-700">Remove Bottom 2 Tread
+                                  </option>
+                                  <option value="removebottom3tread" class="dark:bg-slate-700">Remove Bottom 3 Tread
+                                  </option>
+                                  <option value="removebottom4tread" class="dark:bg-slate-700">Remove Bottom 4 Tread
+                                  </option>
+                                  <option value="removebottom5tread" class="dark:bg-slate-700">Remove Bottom 5 Tread
+                                  </option>
+                                </select>
+                              </div>
+                              <div class="input-area">
+                                <label for="select" class="form-label">Colour Paint Selection</label>
+                                <select id="select" class="form-control">
+                                  <option value="2727714G" class="dark:bg-slate-700">Gloss White</option>
+                                  <option value="2603167M" class="dark:bg-slate-700">Matt White</option>
+                                  <option value="27219319" class="dark:bg-slate-700">Gloss Black</option>
+                                  <option value="2607556M" class="dark:bg-slate-700">Matt Black</option>
+                                  <option value="2607257S" class="dark:bg-slate-700">Monument</option>
+                                </select>
+                              </div>
+                              <div class="input-area relative d-flex">
+                                <label for="largeInput" class="form-label">No Birdsmouth To Ceiling Cut</label>
+                                <input type="checkbox" id="nobirdsmouthtoceilingcut" style="cursor: pointer;"
+                                  name='nobirdsmouthtoceilingcut' />
+                              </div>
+                              <div class="input-area relative d-flex">
+                                <label for="largeInput" class="form-label">Purchase Drawings Only</label>
+                                <input type="checkbox" id="purchasedrawingsonly" name='purchasedrawingsonly' />
+                              </div>
+                              <div class="input-area relative d-flex">
+                                <label for="largeInput" class="form-label">Recess Baseplate Into Slab</label>
+                                <input type="checkbox" id="recessbaseplateintoslab" name='recessbaseplateintoslab' />
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card xl:col-span-4">
+                      <div class="card-body flex flex-col" style="padding-top: 0;padding-bottom: 0;">
+                        <header class="flex items-center border-b border-slate-100 dark:border-slate-700  -mx-6 p-1">
+                          <div class="flex-1">
+                            <div class="card-title text-slate-900 dark:text-white m-0"
+                              style="transform: translateX(18px);"> Monostringer Outputs
+                            </div>
+                          </div>
+                        </header>
+                        <div class="card-text h-full ">
+                          <div class="outputs">
+                            <div class="item">
+                              <div class="fields">
+                                <label for="">Number of Treads</label>
+                                <p></p>
+                              </div>
+                              <div class="fields">
+                                <label for="">Rise Per Step</label>
+                                <p></p>
+                              </div>
+                              <div class="fields">
+                                <label for="">Stair Angle</label>
+                                <p></p>
+                              </div>
+                              <div class="fields">
+                                <label for="">Stringer Length</label>
+                                <p></p>
+                              </div>
+                              <div class="fields">
+                                <label for="">Finished Ceiling Height</label>
+                                <p></p>
+                              </div>
+                              <div class="fields">
+                                <label for="">Finished Floor to Floor</label>
+                                <p></p>
+                              </div>
+                            </div>
+                            <div class="item">
+                              <div class="fields">
+                                <label for="">Tread Going</label>
+                                <p></p>
+                              </div>
+                              <div class="fields">
+                                <label for=""> Top Floor Allowance</label>
+                                <p></p>
+                              </div>
+                              <div class="fields">
+                                <label for="">Bottom Floor Allowance</label>
+                                <p></p>
+                              </div>
+                              <div class="fields">
+                                <label for="">Overall Going</label>
+                                <p></p>
+                              </div>
+                              <div class="fields">
+                                <label for="">Slope Relationship</label>
+                                <p></p>
+                              </div>
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="lg:col-span-8 col-span-12 mh-100 card p-6">
+                    <div id="full-calander-active">
+                      <div class="forge-wrapper" style="margin: 0;">
+                        <canvas id="viewer" class="webgl"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+
+</html>
