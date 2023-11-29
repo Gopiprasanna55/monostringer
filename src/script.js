@@ -132,10 +132,11 @@ light.shadow.focus = 1; // default
 
 // ground
 const ground = new THREE.Mesh(
-  new THREE.PlaneGeometry(100, 100),
+  new THREE.PlaneGeometry(85, 70),
   new THREE.MeshPhongMaterial({ color:0x000000, depthWrite:true })                 //0x8a8a8a
 );
 ground.rotation.x = -Math.PI / 2;
+ground.position.x=20
 ground.position.y = -2;
 ground.receiveShadow = true;
 scene.add(ground);
@@ -176,8 +177,8 @@ controller.maxDistance = 200;
 controller.update();
 
 var renderer = new THREE.WebGLRenderer({ antialias: true, canvas: canvas });
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(window.innerWidth, window.innerHeight);
+// renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth/1.63, window.innerHeight/1.1);
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -1092,6 +1093,7 @@ function addTopConcreteSlab() {
 }
 
 const p = document.querySelectorAll("p")
+console.log(calFunctions.treadCountCalculated());
 p[0].innerHTML = `${calFunctions.treadCountCalculated()}`
 p[1].innerHTML = `${calFunctions.risePerStepCalculated().toFixed(1)} mm`
 p[2].innerHTML = `${calFunctions.stairAngleCalculated().toFixed(1)} °`
@@ -1173,7 +1175,6 @@ function handleFieldValues(fieldValues) {
   }
 }
 const inp = document.querySelectorAll('input, select');
-
 inp.forEach(input => {
   input.addEventListener('change', (event) => {
     scene.remove(...scene.children)
@@ -1185,7 +1186,10 @@ inp.forEach(input => {
     } else {
       fieldValues[name] = value;
     }
+console.log("hello");
+
     handleFieldValues(fieldValues);
+    console.log("kiran");
     Steps();
     addSupport();
     MountingPlate1();
@@ -1200,13 +1204,7 @@ inp.forEach(input => {
     addConcreteFloor();
     addWoodenFloorStart();
     addWoodenFloorEnd();
-    scene.add(ground);
-    scene.add(hemiLight);
-    scene.add(hemiLight1);
-    scene.add(light);
-    scene.add(directionalLight);
-    scene.add(camera);
-    // renderer.render(scene, camera);
+    console.log("vijay");
     p[0].innerHTML = `${calFunctions.treadCountCalculated()}`
     p[1].innerHTML = `${calFunctions.risePerStepCalculated().toFixed(1)} mm`
     p[2].innerHTML = `${calFunctions.stairAngleCalculated().toFixed(1)} °`
@@ -1222,6 +1220,15 @@ inp.forEach(input => {
     if (message > 700 || message < 550) {
       alert("Stair is exceeded the Australian standards for slope relationship")
     }
+    scene.add(ground);
+    scene.add(hemiLight);
+    scene.add(hemiLight1);
+    scene.add(light);
+    scene.add(directionalLight);
+    scene.add(camera);
+    // renderer.render(scene, camera);
+
+   
   });
 });
 const fieldValues = {};
