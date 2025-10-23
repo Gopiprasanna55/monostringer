@@ -2,7 +2,7 @@
     "repository": "#",
     "license": "UNLICENSED",
     "engines": {
-    "node": ">=16.0.0 <17.0.0",  // Specify the required Node.js version range
+    "node": ">=16.0.0 <17.0.0",  
     "npm": ">=7.0.0"
   },
     "scripts": {
