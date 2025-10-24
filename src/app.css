@@ -92,6 +92,22 @@ a {
     color: inherit;
     text-decoration: inherit;
 }
+.color{
+  display: none;
+}
+input[type="color"] {
+  /* Set the width and height to create a circular shape */
+  width: 25px;
+  height: 25px;
+  /* Remove default browser styling */
+  appearance: none;
+  /* Make it a circle by setting border-radius to 50% */
+  border-radius: 50%;
+  /* Optional: add a border for better visibility */
+  border: 1px solid #ccc;
+  /* Optional: add padding for better spacing */
+  padding: 5px;
+}
 /*
 Add the correct font weight in Edge and Safari.
 */
@@ -6479,7 +6495,7 @@ textarea.form-control.is-invalid{
   object-position: bottom;
 }
 .p-6{
-  padding: 1.5rem;
+  padding: 0.2rem;
 }
 .p-\[var\(--app-padding\)\]{
   padding: var(--app-padding);
@@ -7730,17 +7746,17 @@ body{
 }
 
 /* Content layout */
-.page-content{
+/* .page-content{
   padding: 15px;
   padding-bottom: 6rem;
-}
+} */
 @media (min-width: 768px){
-  .page-content{
+  /* .page-content{
     padding-left: 1.5rem;
     padding-right: 1.5rem;
     padding-top: 1.5rem;
     padding-bottom: 37px;
-  }
+  } */
 }
 
 .page-min-height {
@@ -15795,6 +15811,7 @@ ul.custom-list ul li{
   }
   .lg\:col-span-8{
     grid-column: span 8 / span 8;
+    overflow: hidden;
   }
   .lg\:col-span-2{
     grid-column: span 2 / span 2;
@@ -16139,4 +16156,14 @@ ul.custom-list ul li{
 }
 .dark .dark\:hover\:\[\&\:not\(\[data-te-select-option-disabled\]\)\]\:bg-white\/30:not([data-te-select-option-disabled]):hover{
   background-color: rgb(255 255 255 / 0.3);
+}
+
+html, body {
+  margin: 0;
+  height: 100%;
+}
+canvas.webgl {
+  width: 100%;
+  height: 100%;
+  display: block;
 }

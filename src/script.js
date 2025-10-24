@@ -1,16 +1,17 @@
-
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as $ from "jquery";
 import "./app.css"
-
+import { CSG } from 'three-csg-ts';
 
 //import calFunctions
 import { calFunctions } from "./calc";
 window.$ = $;
 const inputs = document.querySelectorAll("input")
+const colorinput = document.getElementById("color")
+
 inputs[0].value = 2700
 inputs[1].value = 325
 inputs[2].value = 20
@@ -27,6 +28,14 @@ const selects = document.querySelectorAll("select")
 selects[0].value = "timberjois"
 selects[1].value = "includealltreads"
 selects[2].value = "2607556M"
+
+
+colorinput.addEventListener("input", function () {
+  var inputcolor = colorinput.value;
+  sessionStorage.setItem("color", inputcolor)
+  sessionStorage.removeItem("texture")
+
+}, false);
 
 const colors = [
   {
@@ -84,31 +93,19 @@ const colors = [
     size: [3, 3, 3],
     shininess: 0,
   },
-  {
-    color: "66533C",
-  },
-  {
-    color: "173A2F",
-  },
-  {
-    color: "153944",
-  },
-  {
-    color: "27548D",
-  },
-  {
-    color: "438AAC",
-  },
 ];
 
 var canvas = document.querySelector(".webgl");
-var width = canvas.width = 1000
-
+// var width = canvas.width = 1000
 
 const backgourndColor = 0xa0a0a0;
 
 var scene = new THREE.Scene();
 scene.background = new THREE.Color(0xa0a0a0);
+
+var modelGroup = new THREE.Group();
+scene.add(modelGroup);
+modelGroup.position.set(-18,-8,0)
 
 const hemiLight = new THREE.HemisphereLight(0x363636,0x444444);
  hemiLight.position.set(0,100,0);
@@ -130,20 +127,16 @@ light.shadow.camera.near = 1; // default
 light.shadow.camera.far = 1000; // default
 light.shadow.focus = 1; // default
 
-// ground
-const ground = new THREE.Mesh(
-  new THREE.PlaneGeometry(85, 70),
-  new THREE.MeshPhongMaterial({ color:0x000000, depthWrite:true })                 //0x8a8a8a
-);
-ground.rotation.x = -Math.PI / 2;
-ground.position.x=20
-ground.position.y = -2;
-ground.receiveShadow = true;
-scene.add(ground);
-
-ground.rotation.x = -Math.PI / 2;
-ground.receiveShadow = true;
-scene.add(ground);
+// // ground
+// const ground = new THREE.Mesh(
+//   new THREE.PlaneGeometry(60, 45),
+//   new THREE.MeshPhongMaterial({ color:0x000000, depthWrite:true })                 //0x8a8a8a
+// );
+// ground.rotation.x = -Math.PI /2;
+// ground.position.x=0
+// ground.position.y = -2;
+// ground.receiveShadow = true;
+// scene.add(ground);
 
 var sizes = {
   width: window.innerWidth,
@@ -151,7 +144,7 @@ var sizes = {
 };
 
 window.addEventListener("resize", (event) => {
-  sizes.width = width.innerWidth;
+  sizes.width = window.innerWidth;
   sizes.height = window.innerHeight;
 
   //Update camera
@@ -160,10 +153,10 @@ window.addEventListener("resize", (event) => {
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
 });
-
-
+// var axesHelper = new THREE.AxesHelper(50);
+// scene.add(axesHelper);
 var camera = new THREE.PerspectiveCamera(
-  40,
+  30,
   window.innerWidth / window.innerHeight,
   1,
   1000
@@ -172,16 +165,16 @@ camera.position.set(-45, 40, 85);
 scene.add(camera);
 
 const controller = new OrbitControls(camera, canvas);
-controller.minDistance = 50;
-controller.maxDistance = 200;
+controller.minDistance =0;
+controller.maxDistance = 600;
 controller.update();
 
 var renderer = new THREE.WebGLRenderer({ antialias: true, canvas: canvas });
-// renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(window.innerWidth/1.63, window.innerHeight/1.1);
+renderer.setSize(1500,1000);
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
 
 const clock = new THREE.Clock();
 
@@ -189,6 +182,7 @@ const animate = () => {
   controller.update();
   renderer.render(scene, camera);
   window.requestAnimationFrame(animate)
+
 };
 animate();
 const link = document.createElement("a");
@@ -208,7 +202,7 @@ var stairStep1FrontHt = 150 / 100.0;
 
 //Stair Step2
 var stairStep2Depth = 560 / 100.0;
-var stairStep2Ht = 10 / 100.0;
+var stairStep2Ht = 8 / 100.0;
 var stairStep2Width = 160 / 100.0;
 
 //RecessPlate
@@ -219,6 +213,7 @@ var recessPlateHt = 10 / 100.0;
 
 //Base
 var woodenFloorThk = 15 / 100.0;
+var floorConcreteHt = 100 / 100.0;
 var floorDepth = 1260 / 100.0;
 var floorConcreteSlotHt = 0 / 100.0;
 var recessPlateToConcreteGap = 50 / 100.0;
@@ -231,7 +226,7 @@ var wallDepth = 100 / 100.0;
  
 //MountingPlate
 var MountingPlatewidth=20/100.0;
-var MountingPlate1Ht=162.5/100.0;
+var MountingPlate1Ht=130/100.0;
 var MountingPlate2Ht=210/100.0;
 
 addSupport();
@@ -289,9 +284,10 @@ addTopbox();
 addLowerSubFloor();
 addTopConcreteSlab();
 addRecessPlate();
+addGroundSubFloor();
+addGroundFloorStart();
+addGroundFloorEnd();
 addConcreteFloor();
-addWoodenFloorStart();
-addWoodenFloorEnd();
 // addWall();
 
 function addWall() {
@@ -338,8 +334,7 @@ function addWall() {
 
   scene.add(mesh);
 }
-
-function addWoodenFloorEnd() {
+function addGroundFloorEnd() {
   var zOffset = (stairBeamDepth - floorDepth) / 2.0;
 
   var extrudeSettings = {
@@ -358,10 +353,10 @@ function addWoodenFloorEnd() {
       yVal + floorConcreteSlotHt
     ),
     new THREE.Vector3(stairWholeW, yVal + floorConcreteSlotHt),
-    new THREE.Vector3(stairWholeW, yVal + floorConcreteSlotHt + woodenFloorThk),
+    new THREE.Vector3(stairWholeW, yVal + floorConcreteSlotHt+woodenFloorThk),
     new THREE.Vector3(
       xVal + floorConcreteSlotWidth,
-      yVal + floorConcreteSlotHt + woodenFloorThk
+      yVal + floorConcreteSlotHt+woodenFloorThk
     ),
   ];
 
@@ -381,10 +376,9 @@ function addWoodenFloorEnd() {
   mesh.translateZ(zOffset);
   mesh.receiveShadow = true;
 
-  scene.add(mesh);
+  modelGroup.add(mesh);
 }
-
-function addWoodenFloorStart() {
+function addGroundFloorStart() {
   var zOffset = (stairBeamDepth - floorDepth) / 2.0;
 
   var extrudeSettings = {
@@ -403,10 +397,10 @@ function addWoodenFloorStart() {
       yVal + floorConcreteSlotHt
     ),
     new THREE.Vector3(xVal, yVal + floorConcreteSlotHt),
-    new THREE.Vector3(xVal, yVal + floorConcreteSlotHt + woodenFloorThk),
+    new THREE.Vector3(xVal, yVal + floorConcreteSlotHt+woodenFloorThk),
     new THREE.Vector3(
       xValOffset - floorStartLength,
-      yVal + floorConcreteSlotHt + woodenFloorThk
+      yVal + floorConcreteSlotHt+woodenFloorThk
     ),
   ];
 
@@ -426,10 +420,9 @@ function addWoodenFloorStart() {
   mesh.translateZ(zOffset);
   mesh.receiveShadow = true;
 
-  scene.add(mesh);
+  modelGroup.add(mesh);
 }
-
-function addConcreteFloor() {
+function addGroundSubFloor() {
   var zOffset = (stairBeamDepth - floorDepth) / 2.0;
 
   var extrudeSettings = {
@@ -440,23 +433,23 @@ function addConcreteFloor() {
 
   var xValOffset = -1 * (recessPlateToStairBeam + recessPlateToConcreteGap);
   var xVal = xValOffset;
-  var yVal = -recessPlateHt;
+  var yVal = -recessPlateHt
 
   var points = [
     new THREE.Vector3(xVal, yVal),
     new THREE.Vector3(xVal + floorConcreteSlotWidth, yVal),
     new THREE.Vector3(
       xVal + floorConcreteSlotWidth,
-      yVal + floorConcreteSlotHt
+      yVal +floorConcreteSlotHt
     ),
-    new THREE.Vector3(stairWholeW, yVal + floorConcreteSlotHt),
+    new THREE.Vector3(stairWholeW, yVal +floorConcreteSlotHt),
     new THREE.Vector3(
       stairWholeW,
-      yVal + floorConcreteSlotHt -(+inputs[4].value/100)
+      yVal +floorConcreteSlotHt-(+inputs[4].value/100)
     ),
     new THREE.Vector3(
       xValOffset - floorStartLength,
-      yVal + floorConcreteSlotHt -(+inputs[4].value/100)
+      yVal + floorConcreteSlotHt-(+inputs[4].value/100)
     ),
     new THREE.Vector3(
       xValOffset - floorStartLength,
@@ -476,9 +469,40 @@ function addConcreteFloor() {
   mesh.translateZ(zOffset);
   mesh.receiveShadow = true;
 
-  scene.add(mesh);
+  modelGroup.add(mesh);
 }
+function addConcreteFloor() {
+  var zOffset = (stairBeamDepth - floorDepth) / 2.0;
 
+  var extrudeSettings = {
+    steps: 1,
+    depth: floorDepth,
+    bevelEnabled: false,
+  };
+
+  var xVal =-1*10.5;
+  var yVal = -0.13-(+inputs[4].value/100);
+
+  var points = [
+    new THREE.Vector3(xVal + floorConcreteSlotWidth,yVal + floorConcreteSlotHt),
+    new THREE.Vector3(stairWholeW, yVal + floorConcreteSlotHt),
+    new THREE.Vector3(stairWholeW, yVal + floorConcreteSlotHt-(+inputs[4].value/100)),
+    new THREE.Vector3(xVal + floorConcreteSlotWidth,yVal + floorConcreteSlotHt-(+inputs[4].value/100)),
+  ];
+
+  var geom = new THREE.ExtrudeBufferGeometry(
+    new THREE.Shape(points),
+    extrudeSettings
+  );
+
+  var mat = new THREE.MeshPhongMaterial({ color: 0xffffff });
+  var mesh = new THREE.Mesh(geom, mat);
+
+  mesh.translateZ(zOffset);
+  mesh.receiveShadow = true;
+
+  modelGroup.add(mesh);
+}
 function addRecessPlate() {
   var zOffset = (stairBeamDepth - recessPlateDepth) / 2.0;
 
@@ -493,7 +517,7 @@ function addRecessPlate() {
   var xVal = xValOffset;
   var yVal = -recessPlateHt;
 
-  if (inputs[13].checked == true) {
+  if (inputs[14].checked == true) {
     floorConcreteSlotHt = 30 / 100.0;
   }
   else {
@@ -512,14 +536,35 @@ function addRecessPlate() {
   );
 
   var mat = new THREE.MeshPhongMaterial({ color: 0x0f0f0f });
-  var mesh = new THREE.Mesh(geom, mat);
+  var recessplate = new THREE.Mesh(geom, mat);
 
-  mesh.translateZ(zOffset);
-  mesh.castShadow = true;
+  recessplate.translateZ(zOffset);
+  recessplate.castShadow = true;
+  recessplate.updateMatrix();
 
-  scene.add(mesh);
+  var boltHoleRadius = 0.06;
+  var boltHoleHeight = 0.11
+  var boltHoleGeometry = new THREE.CylinderGeometry(boltHoleRadius, boltHoleRadius, boltHoleHeight, 32);
+  var boltHolepositions = [];
+
+  boltHolepositions.push({ x: xVal+0.23, y: yVal+0.05, z: zOffset + 0.3 });
+  boltHolepositions.push({ x: xVal+0.23, y: yVal+0.05, z: zOffset + 1.5 });
+  boltHolepositions.push({ x: xVal+0.23, y: yVal+0.05, z: zOffset + 2.7 });
+  boltHolepositions.push({ x: xVal+3.4, y: yVal+0.05, z: zOffset + 0.3 });
+  boltHolepositions.push({ x: xVal+3.4, y: yVal+0.05, z: zOffset + 1.5 });
+  boltHolepositions.push({ x: xVal+3.4, y: yVal+0.05, z: zOffset + 2.7 });
+
+  var boltHoleMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+
+  for (var i = 0; i < boltHolepositions.length; i++) {
+    var boltHoleMesh = new THREE.Mesh(boltHoleGeometry, boltHoleMaterial);
+    var boltHolePosition = boltHolepositions[i];
+    boltHoleMesh.position.set(boltHolePosition.x, boltHolePosition.y, boltHolePosition.z);
+    boltHoleMesh.updateMatrix();
+    recessplate = CSG.subtract(recessplate, boltHoleMesh);
+  }
+modelGroup.add(recessplate);
 }
-// Trade
 function addStepPart3(index) {
   var zOffset = (stairBeamDepth - (+inputs[7].value / 100.0)) / 2.0;
 
@@ -533,10 +578,10 @@ function addStepPart3(index) {
   var xVal = index * calFunctions.treadGoingCalculated() / 100.0 - xValOffset-1.18;
   var yVal = index * calFunctions.risePerStepCalculated() / 100.0 + stairStep1FrontHt + stairStep2Ht;
   var points = [
-    new THREE.Vector3(xVal, yVal),
-    new THREE.Vector3(xVal + (+inputs[10].value / 100.0 ) + (calFunctions.treadGoingCalculated() / 100.0) - 0.10, yVal),
-    new THREE.Vector3(xVal +(+inputs[10].value / 100.0 ) + (calFunctions.treadGoingCalculated() / 100.0) - 0.10, yVal + (+inputs[9].value / 100.0)),
-    new THREE.Vector3(xVal, yVal + (+inputs[9].value / 100.0)),
+    new THREE.Vector3(xVal, yVal+0.1),
+    new THREE.Vector3(xVal + (+inputs[10].value / 100.0 ) + (calFunctions.treadGoingCalculated() / 100.0) - 0.10, yVal+0.1),
+    new THREE.Vector3(xVal +(+inputs[10].value / 100.0 ) + (calFunctions.treadGoingCalculated() / 100.0) - 0.10, yVal + (+inputs[9].value / 100.0)+0.1),
+    new THREE.Vector3(xVal, yVal + (+inputs[9].value / 100.0)+0.1),
   ];
   var geom = new THREE.ExtrudeBufferGeometry(
     new THREE.Shape(points),
@@ -549,17 +594,17 @@ function addStepPart3(index) {
   frameTexture.wrapT = THREE.RepeatWrapping;
   frameTexture.repeat.set(0.01, 0.01);
 
-  var mat = new THREE.MeshPhongMaterial({ color: 0xb87333 });
+  var mat = new THREE.MeshPhongMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
   var mesh = new THREE.Mesh(geom, mat);
 
   mesh.translateZ(zOffset);
-  mesh.castShadow =true;
+  // mesh.castShadow =true;
 
-  scene.add(mesh);
+  modelGroup.add(mesh);
+  
 }
-
 function addStepPart2(index) {
-  var zOffset = (stairBeamDepth - stairStep2Depth) / 2.0;
+var zOffset = (stairBeamDepth - stairStep2Depth) / 2.0;
 
   var extrudeSettings = {
     steps: 1,
@@ -569,19 +614,22 @@ function addStepPart2(index) {
 
   var xValOffset = (stairStep2Width - stairStep1Width) / 2.0;
   var xVal = index * calFunctions.treadGoingCalculated() / 100.0 - xValOffset;
-  var yVal = index * calFunctions.risePerStepCalculated() / 100.0 + stairStep1FrontHt;
+  var yVal = index * calFunctions.risePerStepCalculated() / 100.0 + stairStep1FrontHt+0.08;
 
   var points = [
-    new THREE.Vector3(xVal, yVal),
-    new THREE.Vector3(xVal + stairStep2Width, yVal),
-    new THREE.Vector3(xVal + stairStep2Width, yVal + stairStep2Ht),
-    new THREE.Vector3(xVal, yVal + stairStep2Ht),
+    new THREE.Vector3(xVal, yVal+0.12),
+    new THREE.Vector3(xVal + stairStep2Width, yVal+0.12),
+    new THREE.Vector3(xVal + stairStep2Width, yVal + stairStep2Ht+0.12),
+    new THREE.Vector3(xVal, yVal + stairStep2Ht+0.12),
   ];
 
   var geom = new THREE.ExtrudeBufferGeometry(
     new THREE.Shape(points),
     extrudeSettings
   );
+  var color = sessionStorage.getItem("color")
+  var texture = sessionStorage.getItem("texture")
+  var frameTexture = new THREE.TextureLoader().load(texture);
 
   var frameTexture = new THREE.TextureLoader().load(colors[6].texture);
   if (selects[2].value == "2603167M") {
@@ -597,22 +645,86 @@ function addStepPart2(index) {
   if (selects[2].value == "2607257S") {
     frameTexture = new THREE.TextureLoader().load(colors[10].texture);
   }
-  frameTexture.wrapS = THREE.RepeatWrapping;
-  frameTexture.wrapT = THREE.RepeatWrapping;
+  var mat;
+  if (selects[2].value == "colors") {
+    if (texture) {
+      frameTexture = new THREE.TextureLoader().load(texture);
+      frameTexture.wrapS = THREE.RepeatWrapping;
+      frameTexture.wrapT = THREE.RepeatWrapping;
+      frameTexture.repeat.set(0.05, 0.05);
+      mat = new THREE.MeshPhongMaterial({ map: frameTexture, shininess: 50 });
+    } else {
+      mat = new THREE.MeshPhongMaterial({ color: color });
+    }
+  } else {
+    frameTexture.wrapS = THREE.RepeatWrapping;
+    frameTexture.wrapT = THREE.RepeatWrapping;
+    frameTexture.repeat.set(0.05, 0.05);
+    mat = new THREE.MeshPhongMaterial({ map: frameTexture, shininess: 50 });
+  }
 
-  var mat = new THREE.MeshPhongMaterial({ map: frameTexture, shininess: 50 });
-  var mesh = new THREE.Mesh(geom, mat);
-  mesh.translateZ(zOffset);
+  var plate = new THREE.Mesh(geom, mat);
+  plate.translateZ(zOffset);
+  plate.updateMatrix();
+  
 
-  scene.add(mesh);
-}
+var boltHoleRadius = 0.06; 
+  var boltHoleHeight = 0.11
+  var boltHoleGeometry = new THREE.CylinderGeometry(boltHoleRadius, boltHoleRadius, boltHoleHeight, 9);
+  var boltHolepositions = [];
 
+  var boltHoleX = xVal + (0.1) * (stairStep2Width / 2);
+  var boltHoleY = yVal + stairStep2Ht / 2;
+
+  boltHolepositions.push({ x: boltHoleX + 0.1, y: boltHoleY + 0.12, z: zOffset + 0.3 });
+  boltHolepositions.push({ x: boltHoleX + 1.3, y: boltHoleY + 0.12, z: zOffset + 0.3 });
+  boltHolepositions.push({ x: boltHoleX + 0.1, y: boltHoleY + 0.12, z: zOffset + 1.6 });
+  boltHolepositions.push({ x: boltHoleX + 1.3, y: boltHoleY + 0.12, z: zOffset + 1.6 });
+  boltHolepositions.push({ x: boltHoleX + 0.1, y: boltHoleY + 0.12, z: zOffset + 4 });
+  boltHolepositions.push({ x: boltHoleX + 1.3, y: boltHoleY + 0.12, z: zOffset + 4 });
+  boltHolepositions.push({ x: boltHoleX + 0.1, y: boltHoleY + 0.12, z: zOffset + 5.4 });
+  boltHolepositions.push({ x: boltHoleX + 1.3, y: boltHoleY + 0.12, z: zOffset + 5.4 });
+
+  var boltHoleMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+
+  for (var i = 0; i < boltHolepositions.length; i++) {
+    var boltHoleMesh = new THREE.Mesh(boltHoleGeometry, boltHoleMaterial);
+    var boltHolePosition = boltHolepositions[i];
+    boltHoleMesh.position.set(boltHolePosition.x, boltHolePosition.y, boltHolePosition.z);
+    boltHoleMesh.updateMatrix();
+    plate = CSG.subtract(plate, boltHoleMesh);
+  }
+
+  var boxShape = new THREE.Shape();
+boxShape.moveTo(-0.4, -0.055);
+boxShape.lineTo(-0.4, 0.055);
+boxShape.lineTo(0.4, 0.055);
+boxShape.lineTo(0.4, -0.055);
+boxShape.lineTo(-0.4, -0.055);
+
+var extrudeSettings = {
+  depth:0.8, 
+  bevelEnabled: true,
+  bevelThickness: 0.05,
+  bevelSize: 0.1,
+  bevelOffset: 0,
+  bevelSegments: 10, 
+};
+
+var boxholegeometry = new THREE.ExtrudeGeometry(boxShape, extrudeSettings);
+var boxholematerial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+var boxholemesh = new THREE.Mesh(boxholegeometry, boxholematerial);
+boxholemesh.position.set(xVal + 0.8, yVal + 0.16, zOffset + 2.4);
+boxholemesh.updateMatrix();
+plate = CSG.subtract(plate, boxholemesh);
+  modelGroup.add(plate);
+} 
 function addStepPart1(xVal, yVal) {
-  var zOffset = (stairBeamDepth - stairStepDepth) / 2.0;
+  var zOffset = (stairBeamDepth - stairStepDepth) /2.0;
 
   var width = 1;
-  var frontHt = 1.5;
-  var backHt = 0.60;
+  var frontHt = 1.6;
+  var backHt = 0.70;
 
   var extrudeSettings = {
     steps: 1,
@@ -635,6 +747,72 @@ function addStepPart1(xVal, yVal) {
     new THREE.Shape(points),
     extrudeSettings
   );
+  var color = sessionStorage.getItem("color")
+  var texture = sessionStorage.getItem("texture")
+  var frameTexture = new THREE.TextureLoader().load(texture);
+
+  var frameTexture = new THREE.TextureLoader().load(colors[6].texture);
+  if (selects[2].value == "2603167M") {
+    frameTexture = new THREE.TextureLoader().load(colors[7].texture);
+
+  } if (selects[2].value == "27219319") {
+    frameTexture = new THREE.TextureLoader().load(colors[8].texture);
+  }
+  if (selects[2].value == "2607556M") {
+    frameTexture = new THREE.TextureLoader().load(colors[9].texture);
+
+  }
+  if (selects[2].value == "2607257S") {
+    frameTexture = new THREE.TextureLoader().load(colors[10].texture);
+
+  }
+  var mat;
+  if (selects[2].value == "colors") {
+    if (texture) {
+      frameTexture = new THREE.TextureLoader().load(texture);
+      frameTexture.wrapS = THREE.RepeatWrapping;
+      frameTexture.wrapT = THREE.RepeatWrapping;
+      frameTexture.repeat.set(0.05, 0.05);
+      mat = new THREE.MeshPhongMaterial({ map: frameTexture, shininess: 50 });
+    } else {
+      mat = new THREE.MeshPhongMaterial({ color: color });
+    }
+  } else {
+    frameTexture.wrapS = THREE.RepeatWrapping;
+    frameTexture.wrapT = THREE.RepeatWrapping;
+    frameTexture.repeat.set(0.05, 0.05);
+    mat = new THREE.MeshPhongMaterial({ map: frameTexture, shininess: 50 });
+  }
+
+  var mesh = new THREE.Mesh(geom, mat);
+  mesh.translateZ(zOffset);
+  mesh.updateMatrix();
+
+
+var zOffset1 = (stairBeamDepth - stairStepDepth) /1.95;
+  var width1=0.99
+
+  var extrudeSettings = {
+    steps: 1,
+    depth: 0.98,
+    bevelEnabled: true,
+    bevelThickness: 0.05,
+    bevelSize: 0.1,
+    bevelOffset: 0,
+    bevelSegments: 10,
+  };
+
+  var points1 = [
+    new THREE.Vector3(xVal, yVal),
+    new THREE.Vector3(xVal + width1, yVal + backHt),
+    new THREE.Vector3(xVal + width1, yVal + frontHt),
+    new THREE.Vector3(xVal, yVal + frontHt),
+  ];
+
+  var geom1 = new THREE.ExtrudeBufferGeometry(
+    new THREE.Shape(points1),
+    extrudeSettings
+  );
   var frameTexture = new THREE.TextureLoader().load(colors[6].texture);
   if (selects[2].value == "2603167M") {
     frameTexture = new THREE.TextureLoader().load(colors[7].texture);
@@ -654,11 +832,17 @@ function addStepPart1(xVal, yVal) {
   frameTexture.wrapT = THREE.RepeatWrapping;
   frameTexture.repeat.set(0.05, 0.05);
 
-  var mat = new THREE.MeshPhongMaterial({ map: frameTexture, shininess: 50 });
+  var mat1 = new THREE.MeshPhongMaterial({ map: frameTexture, shininess: 50 });
 
-  var mesh = new THREE.Mesh(geom, mat);
-  mesh.translateZ(zOffset);
-  scene.add(mesh);
+  var mesh1 = new THREE.Mesh(geom1, mat1);
+  mesh1.translateZ(zOffset1);
+  mesh1.updateMatrix();
+  const subRes2 = CSG.subtract(mesh,mesh1);
+modelGroup.add(subRes2);
+  var geo = new THREE.EdgesGeometry( mesh.geometry );
+var mat = new THREE.LineBasicMaterial( { color:  0x111111} );
+var wireframe = new THREE.LineSegments( geo, mat );
+subRes2.add( wireframe );
 
 }
 var stairWholeW = 0;
@@ -668,7 +852,7 @@ function addSupport() {
   var stairBeamWidth = 1.5;
   var totalStairHt;
   var points; 
-  if (inputs[11].checked == true)
+  if (inputs[12].checked == true)
   {
     totalStairHt=((((calFunctions.risePerStepCalculated() / 100.0 * 100) * calFunctions.treadCountCalculated()) + calFunctions.topRiserFaceCalculated()) / 100.0)-(+inputs[6].value/100)-0.60;
   }
@@ -716,25 +900,32 @@ function addSupport() {
   if(inputs[1].value<325)
   {
  points = [
-    new THREE.Vector2(),
-    new THREE.Vector2(baseWidth, 0),
-    new THREE.Vector2(stairWholeWidth+1.10, h2+1.10),
-    new THREE.Vector2(stairWholeWidth+1.10, totalStairHt+1.10),
+    new THREE.Vector3(0,0),
+    new THREE.Vector3(baseWidth, 0),
+    new THREE.Vector3(stairWholeWidth+1.10, h2+1.10),
+    new THREE.Vector3(stairWholeWidth+1.10, totalStairHt+1.10),
   ];
 }
 else{
   points = [
-    new THREE.Vector2(),
-    new THREE.Vector2(baseWidth, 0),
-    new THREE.Vector2(stairWholeWidth, h2),
-    new THREE.Vector2(stairWholeWidth, totalStairHt),
+    new THREE.Vector3(0,0),
+    new THREE.Vector3(baseWidth, 0),
+    new THREE.Vector3(stairWholeWidth, h2),
+    new THREE.Vector3(stairWholeWidth, totalStairHt),
   ];
 }
   var geom = new THREE.ExtrudeBufferGeometry(
     new THREE.Shape(points),
     extrudeSettings
   );
-  var frameTexture = new THREE.TextureLoader().load(colors[6].texture);
+  var color = sessionStorage.getItem("color")
+  var texture = sessionStorage.getItem("texture")
+  var frameTexture = new THREE.TextureLoader().load(texture);
+
+  if (selects[2].value == "2727714G") {
+    frameTexture = new THREE.TextureLoader().load(colors[6].texture);
+
+  }
   if (selects[2].value == "2603167M") {
     frameTexture = new THREE.TextureLoader().load(colors[7].texture);
 
@@ -749,15 +940,33 @@ else{
     frameTexture = new THREE.TextureLoader().load(colors[10].texture);
 
   }
-  frameTexture.wrapS = THREE.RepeatWrapping;
-  frameTexture.wrapT = THREE.RepeatWrapping;
-  frameTexture.repeat.set(0.05, 0.05);
+  var mat;
+  if (selects[2].value == "colors") {
+    if (texture) {
+      frameTexture = new THREE.TextureLoader().load(texture);
+      frameTexture.wrapS = THREE.RepeatWrapping;
+      frameTexture.wrapT = THREE.RepeatWrapping;
+      frameTexture.repeat.set(0.05, 0.05);
+      mat = new THREE.MeshPhongMaterial({ map: frameTexture, shininess: 50 });
+    } else {
+      mat = new THREE.MeshPhongMaterial({ color: color });
+    }
+  } else {
+    frameTexture.wrapS = THREE.RepeatWrapping;
+    frameTexture.wrapT = THREE.RepeatWrapping;
+    frameTexture.repeat.set(0.05, 0.05);
+    mat = new THREE.MeshPhongMaterial({ map: frameTexture, shininess: 50 });
+  }
 
-  var mat = new THREE.MeshPhongMaterial({ map: frameTexture, shininess: 50 });
   var mesh = new THREE.Mesh(geom, mat);
-  scene.add(mesh);
+  modelGroup.add(mesh);
+  var geo = new THREE.EdgesGeometry( mesh.geometry ); // or WireframeGeometry
+var mat = new THREE.LineBasicMaterial( { color: 0x111111} );
+var wireframe = new THREE.LineSegments( geo, mat );
+mesh.add( wireframe );
 }
 function MountingPlate1() {
+
   var MountPlatedepth = 350 / 100.0;
   var zOffset = (stairBeamDepth - MountPlatedepth) / 2.0;
 
@@ -767,7 +976,7 @@ function MountingPlate1() {
     bevelEnabled: false,
   };
   var xVal = calFunctions.treadGoingCalculated() / 100.0 * calFunctions.treadCountCalculated()+(+inputs[6].value / 100.0) + (+inputs[5].value / 100.0)-0.80;
-  var yVal = calFunctions.risePerStepCalculated() / 100.0 * calFunctions.treadCountCalculated()+(+inputs[9].value / 100.0)+1.50 ;
+  var yVal = calFunctions.risePerStepCalculated() / 100.0 * calFunctions.treadCountCalculated()+(+inputs[9].value / 100.0)+1.30 ;
   var points = [
     new THREE.Vector3(xVal, yVal),
     new THREE.Vector3(xVal+MountingPlatewidth , yVal),
@@ -799,9 +1008,37 @@ function MountingPlate1() {
   frameTexture.repeat.set(0.05, 0.05);
 
   var mat = new THREE.MeshPhongMaterial({ map: frameTexture, shininess: 50 });
-  var mesh = new THREE.Mesh(geom, mat);
-  mesh.translateZ(zOffset);
-  scene.add(mesh);
+  var mountingplate = new THREE.Mesh(geom, mat);
+  mountingplate.translateZ(zOffset);
+  mountingplate.updateMatrix();
+
+var boltHoleRadius = 0.06; 
+var boltHoleHeight = 0.3
+var boltHoleGeometry = new THREE.CylinderGeometry(boltHoleRadius, boltHoleRadius, boltHoleHeight, 32);
+var boltHolepositions = [];
+
+boltHolepositions.push({ x: xVal+0.1, y: yVal-0.2, z: zOffset + 0.3 });
+boltHolepositions.push({ x: xVal+0.1, y: yVal-0.2, z: zOffset + 1.8 });
+boltHolepositions.push({ x: xVal+0.1, y: yVal-0.2, z: zOffset + 3.3 });
+boltHolepositions.push({ x: xVal+0.1, y: yVal-1, z: zOffset + 0.3 });
+boltHolepositions.push({ x: xVal+0.1, y: yVal-1, z: zOffset + 1.8 });
+boltHolepositions.push({ x: xVal+0.1, y: yVal-1, z: zOffset + 3.3 });
+
+
+var boltHoleMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+
+
+for (var i = 0; i < boltHolepositions.length; i++) {
+  var boltHoleMesh = new THREE.Mesh(boltHoleGeometry, boltHoleMaterial);
+  var boltHolePosition = boltHolepositions[i];
+  boltHoleMesh.position.set(boltHolePosition.x, boltHolePosition.y, boltHolePosition.z);
+  boltHoleMesh.rotation.set(0, 0, Math.PI/2);
+  boltHoleMesh.updateMatrix();
+  mountingplate = CSG.subtract(mountingplate, boltHoleMesh);
+}
+
+
+modelGroup.add(mountingplate);
 }
 function MountingPlate2() {
   var MountPlatedepth = 200 / 100.0;
@@ -856,7 +1093,7 @@ function MountingPlate2() {
   var mat = new THREE.MeshPhongMaterial({ map: frameTexture, shininess: 50 });
   var mesh = new THREE.Mesh(geom, mat);
   mesh.translateZ(zOffset);
-  scene.add(mesh);
+  modelGroup.add(mesh);
 }
 function addPlate() {
   var zOffset = (stairBeamDepth - (+inputs[7].value / 100.0)) / 2.0;
@@ -884,13 +1121,13 @@ function addPlate() {
   frameTexture.wrapS = THREE.RepeatWrapping;
   frameTexture.wrapT = THREE.RepeatWrapping;
 
-  var mat = new THREE.MeshPhongMaterial({ color: 0xb87333 });
+  var mat = new THREE.MeshPhongMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
   var mesh = new THREE.Mesh(geom, mat);
 
   mesh.translateZ(zOffset);
   mesh.castShadow = true;
 
-  scene.add(mesh);
+  modelGroup.add(mesh);
 }
 function addPlateTop() {
   var zOffset = (stairBeamDepth - (+inputs[7].value / 100.0)) / 2.0;
@@ -919,13 +1156,13 @@ function addPlateTop() {
   frameTexture.wrapS = THREE.RepeatWrapping;
   frameTexture.wrapT = THREE.RepeatWrapping;
 
-  var mat = new THREE.MeshPhongMaterial({ color: 0xb87333 });
+  var mat = new THREE.MeshPhongMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
   var mesh = new THREE.Mesh(geom, mat);
 
   mesh.translateZ(zOffset);
   mesh.castShadow = true;
 
-  scene.add(mesh);
+  modelGroup.add(mesh);
 }
 function addTop() {
   var TopWidth = 500 / 100.0;
@@ -963,9 +1200,8 @@ function addTop() {
   mesh.translateZ(zOffset);
   mesh.castShadow = true;
 
-  scene.add(mesh);
+modelGroup.add(mesh);
 }
-
 function addTopbox() {
   var TopBoxWidth = 250/ 100.0;
   var zOffset = (stairBeamDepth - floorDepth) / 2.0;
@@ -1012,7 +1248,7 @@ function addTopbox() {
   mesh.translateZ(zOffset);
   mesh.castShadow = true;
 
-  scene.add(mesh);
+  modelGroup.add(mesh);
 }
 function addLowerSubFloor() {
   var LowerSubFloorWidth = 500 / 100.0;
@@ -1050,10 +1286,9 @@ if(inputs[3].value==0)
   scene.remove(mesh);
 }
 else{
-  scene.add(mesh);
+  modelGroup.add(mesh);
 }
 }
-
 function addTopConcreteSlab() {
   var TopConcreteSlabWidth = 500 / 100.0;
   var zOffset = (stairBeamDepth - floorDepth) / 2.0;
@@ -1089,8 +1324,10 @@ function addTopConcreteSlab() {
   mesh.translateZ(zOffset);
   mesh.castShadow = true;
 
-  scene.add(mesh);
+  modelGroup.add(mesh);
 }
+
+
 
 const p = document.querySelectorAll("p")
 console.log(calFunctions.treadCountCalculated());
@@ -1177,19 +1414,46 @@ function handleFieldValues(fieldValues) {
 const inp = document.querySelectorAll('input, select');
 inp.forEach(input => {
   input.addEventListener('change', (event) => {
-    scene.remove(...scene.children)
+    modelGroup.remove(...modelGroup.children)
     const value = event.target.value;
     const type = event.target.type;
     const name = event.target.name;
-    if (type === 'checkbox') {
+    if (type === 'radio') {
       fieldValues[name] = event.target.checked;
     } else {
       fieldValues[name] = value;
     }
-console.log("hello");
 
+    if (selects[2].value == "colors") {
+      colorinput.style.display = "block"
+    } else if (selects[2].value == "2727714G") {
+      colorinput.value = "#FFFDFA"
+      colorinput.style.display = "none"
+      sessionStorage.setItem("texture", colors[6].texture)
+    }
+    else if (selects[2].value == "2603167M") {
+      colorinput.value = "#FDFBF9"
+      colorinput.style.display = "none"
+      sessionStorage.setItem("texture", colors[7].texture)
+
+    } else if (selects[2].value == "27219319") {
+      colorinput.value = "#252324"
+      colorinput.style.display = "none"
+      sessionStorage.setItem("texture", colors[8].texture)
+
+    }
+    else if (selects[2].value == "2607556M") {
+      colorinput.value = "#504e4e"
+      colorinput.style.display = "none"
+      sessionStorage.setItem("texture", colors[9].texture)
+
+    }
+    else if (selects[2].value == "2607257S") {
+      colorinput.value = "#84898c"
+      colorinput.style.display = "none"
+      sessionStorage.setItem("texture", colors[10].texture)
+    }
     handleFieldValues(fieldValues);
-    console.log("kiran");
     Steps();
     addSupport();
     MountingPlate1();
@@ -1201,10 +1465,10 @@ console.log("hello");
     addLowerSubFloor();
     addTopConcreteSlab();
     addRecessPlate();
+    addGroundSubFloor();
+    addGroundFloorStart();
+    addGroundFloorEnd();
     addConcreteFloor();
-    addWoodenFloorStart();
-    addWoodenFloorEnd();
-    console.log("vijay");
     p[0].innerHTML = `${calFunctions.treadCountCalculated()}`
     p[1].innerHTML = `${calFunctions.risePerStepCalculated().toFixed(1)} mm`
     p[2].innerHTML = `${calFunctions.stairAngleCalculated().toFixed(1)} °`
@@ -1220,15 +1484,11 @@ console.log("hello");
     if (message > 700 || message < 550) {
       alert("Stair is exceeded the Australian standards for slope relationship")
     }
-    scene.add(ground);
+    
     scene.add(hemiLight);
     scene.add(hemiLight1);
     scene.add(light);
-    scene.add(directionalLight);
     scene.add(camera);
-    // renderer.render(scene, camera);
-
-   
   });
 });
 const fieldValues = {};

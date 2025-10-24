@@ -15,13 +15,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
   <!-- BEGIN: Theme CSS-->
   <!-- <link rel="stylesheet" href="assets/css/rt-plugins.css"> -->
   <!-- <link rel="stylesheet" href="./app.css"> -->
   <!-- End : Theme CSS-->
   <!-- <script src="assets/js/settings.js" sync></script> -->
+  
   <style>
-    /* body {
+    body {
       width: 100%;
       height: 100%;
       position: fixed;
@@ -30,7 +33,7 @@
       overflow: hidden;
       margin: 0;
       padding: 0;
-    } */
+    }
     .outputs {
       display: flex;
       width: 100%;
@@ -50,6 +53,91 @@
       gap: 10px;
       justify-content: space-between;
     }
+    .navbar {
+  width: 100%;
+  height: 55px;
+  background-color: #1e1e2f;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.brand-name {
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.username {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.logout-btn {
+  /* background-color:white; */
+  color: white;
+  /* border: none;
+  padding: 8px 14px;
+  border-radius: 5px; */
+  cursor: pointer;
+  font-size: 1rem;
+  
+}
+
+ .switch {
+    position: relative !important;
+    display: inline-block;
+    width: 46px;
+    height: 22px;
+  }
+  .switch input { display: none; }
+  .slider {
+    position: absolute !important;
+    inset: 0;
+    background: #ccc;
+    border-radius: 22px;
+    cursor: pointer;
+    transition: .3s;
+ }
+ .slider{
+  width: 46px;
+ }
+  .slider:before {
+    content: "";
+    position: absolute ;
+    width: 18px;
+    height: 18px;
+    left: 2px;
+    bottom: 2px;
+    background: white;
+    border-radius: 50%;
+    transition: .3s;
+  }
+  input:checked + .slider { background: #2196f3; }
+  input:checked + .slider:before { transform: translateX(24px); }
+
+
     
   </style>
 </head>
@@ -57,27 +145,42 @@
 <body id="body_class">
   <main class="app-wrapper">
     <div>
-      <div class="content-wrapper transition-all duration-150 ltr:ml-[248px] rtl:mr-[248px]" id="content_wrapper"
+      <div>
+                   <nav class="navbar">
+                      <div class="nav-left">
+                        <!-- <img src="https://fdestech.com/wp-content/uploads/2018/06/footerlogo_white.png" alt="Mono Stringer Builder Logo" class="logo"  style="width: 72px;" > -->
+                        <span class="brand-name">Mono Stringer Builder</span>
+                      </div>
+
+                      <div class="nav-right">
+                        <span class="username">admin@fdestech.com</span>
+                        <button class="logout-btn"><i class="bi bi-person-circle"></i></i></button>
+                      </div>
+                    </nav>
+                </div>
+      <div class="content-wrapper transition-all duration-150 " id="content_wrapper"
         style="margin: 0;">
-        <div class="page-content" style="padding-bottom: 10px;">
+        <div class="page-content" style="padding-top: 5px;">
           <div class="transition-all duration-150 container-fluid" id="page_layout">
             <div id="content_layout">
+              
               <div class="dashcode-calender">
+
                 <div class="grid grid-cols-12 gap-4" style="height: 100%;">
-                  <div class="lg:col-span-4 col-span-12   py-0 d-flex flex-column gap-2">
+                  <div class="lg:col-span-4 col-span-12   py-0 d-flex flex-column gap-1">
                     <div class="card xl:col-span-4">
                       <div class="card-body flex flex-col py-0">
                         <!-- <header class="flex items-center border-b border-slate-100 dark:border-slate-700 -mx-6 px-6">
                           <div class="flex-1">
                             <div class="card-title text-slate-900 dark:text-white" style="font-size: 16px;">Inputs</div>
                           </div>
-                        </header> -->
-                        <header class="flex items-center border-b border-slate-100 dark:border-slate-700 -mx-6 p-1">
+                        <!-- </header> -->
+                       <header class="flex items-center border-b border-slate-100 dark:border-slate-700 ">
                           <div class="flex-1">
                             <div class="card-title text-slate-900 dark:text-white m-0"
-                              style="transform: translateX(18px);">Monostringer Inputs</div>
+                              style="transform: translateX(18px);font-size: 14px;">Inputs</div>
                           </div>
-                        </header>
+                        </header> 
                         <div class="card-text h-full ">
                           <form class="space-y-4">
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 p-2">
@@ -98,20 +201,21 @@
                                 <input type="number" id="HeaderThickness" class="form-control" name="headerthickness" />
                               </div>
                               <div class="input-area relative">
-                                <label for="largeInput" class="form-label">Future Top Floor Covering Thickness</label>
+                                <label for="largeInput" class="form-label">Level1 Finished Floor Thickness</label>
                                 <input type="number" id="FutureTopFloorCoveringThickness" class="form-control"
                                   name="futuretopfloorcoveringthickness" />
 
                               </div>
                               <div class="input-area relative">
-                                <label for="largeInput" class="form-label">Upper Subfloor Thickness</label>
+                                <label for="largeInput" class="form-label">Level1 Sub Floor Thickness</label>
                                 <input type="number" id="" class="form-control" name='uppersubfloorthickness' />
                               </div>
                               <div class="input-area relative">
-                                <label for="largeInput" class="form-label">Future Lower Floor Covering Thickness</label>
+                                <label for="largeInput" class="form-label">Ground Finished Floor Thickness</label>
                                 <input type="number" id="futurelowerfloorcoveringthickness" class="form-control"
                                   name='futurelowerfloorcoveringthickness' />
                               </div>
+                              
 
                               <div class="input-area relative">
                                 <label for="largeInput" class="form-label">Top Riser Thickness</label>
@@ -157,28 +261,51 @@
                                 </select>
                               </div>
                               <div class="input-area">
+                                <div style="display: flex;">
                                 <label for="select" class="form-label">Colour Paint Selection</label>
+
+                                  <input type="color" id="color" class="color"/>
+                                </div>
                                 <select id="select" class="form-control">
                                   <option value="2727714G" class="dark:bg-slate-700">Gloss White</option>
                                   <option value="2603167M" class="dark:bg-slate-700">Matt White</option>
                                   <option value="27219319" class="dark:bg-slate-700">Gloss Black</option>
                                   <option value="2607556M" class="dark:bg-slate-700">Matt Black</option>
                                   <option value="2607257S" class="dark:bg-slate-700">Monument</option>
+                                  <option value="colors" class="dark:bg-slate-700">Customized Colors</option>
+
                                 </select>
                               </div>
-                              <div class="input-area relative d-flex">
-                                <label for="largeInput" class="form-label">No Birdsmouth To Ceiling Cut</label>
-                                <input type="checkbox" id="nobirdsmouthtoceilingcut" style="cursor: pointer;"
-                                  name='nobirdsmouthtoceilingcut' />
+                              
+                              
+
+                              <!-- Birdsmouth -->
+                              <div class="input-area relative d-flex" style="align-items:center; gap:12px;">
+                                <label class="form-label" for="nobirdsmouthtoceilingcut">No Birdsmouth to ceilingcut</label>
+                                <label class="switch">
+                                  <input type="checkbox" id="nobirdsmouthtoceilingcut" />
+                                  <span class="slider"></span>
+                                </label>
                               </div>
-                              <div class="input-area relative d-flex">
-                                <label for="largeInput" class="form-label">Purchase Drawings Only</label>
-                                <input type="checkbox" id="purchasedrawingsonly" name='purchasedrawingsonly' />
+
+                              <!-- Drawings -->
+                              <div class="input-area relative d-flex" style="align-items:center; gap:12px;padding-left: 3px;">
+                                <label class="form-label" for="purchasedrawingsonly">purchase Drawings only</label>
+                                <label class="switch">
+                                  <input type="checkbox" id="purchasedrawingsonly" />
+                                  <span class="slider"></span>
+                                </label>
                               </div>
-                              <div class="input-area relative d-flex">
-                                <label for="largeInput" class="form-label">Recess Baseplate Into Slab</label>
-                                <input type="checkbox" id="recessbaseplateintoslab" name='recessbaseplateintoslab' />
+
+                              <!-- Baseplate -->
+                              <div class="input-area relative d-flex" style="align-items:center; gap:12px;">
+                                <label class="form-label" for="recessbaseplateintoslab">Recess Baseplate into slab</label>
+                                <label class="switch">
+                                  <input type="checkbox" id="recessbaseplateintoslab" />
+                                  <span class="slider"></span>
+                                </label>
                               </div>
+
                             </div>
                           </form>
                         </div>
@@ -186,10 +313,10 @@
                     </div>
                     <div class="card xl:col-span-4">
                       <div class="card-body flex flex-col" style="padding-top: 0;padding-bottom: 0;">
-                        <header class="flex items-center border-b border-slate-100 dark:border-slate-700  -mx-6 p-1">
+                        <header class="flex items-center border-b border-slate-100 dark:border-slate-700  ">
                           <div class="flex-1">
                             <div class="card-title text-slate-900 dark:text-white m-0"
-                              style="transform: translateX(18px);"> Monostringer Outputs
+                              style="transform: translateX(18px);font-size: 14px;"> Outputs
                             </div>
                           </div>
                         </header>
@@ -249,7 +376,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="lg:col-span-8 col-span-12 mh-100 card p-6">
+                  <div class="lg:col-span-8 col-span-12  card " style="height: 88%;overflow: hidden;">
                     <div id="full-calander-active">
                       <div class="forge-wrapper" style="margin: 0;">
                         <canvas id="viewer" class="webgl"></canvas>

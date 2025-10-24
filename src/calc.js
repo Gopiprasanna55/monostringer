@@ -49,6 +49,7 @@ var calFunctions = {
         (+inputs[6].value);
         return val;
     },
+
     treadGoingCalculated: function () {
         var val = data.monoStringWizard.useOverallGoing
             ? Math.round(
@@ -60,7 +61,7 @@ var calFunctions = {
     },
     overallGoingCalculated: function () {
         var calculated =
-            this.treadCountCalculated() * this.risePerStepCalculated()+
+            this.treadCountCalculated() * this.treadGoingCalculated()+
             this.topRiserFaceCalculated();
         if (data.monoStringWizard.overallGoing == -99)
             data.monoStringWizard.overallGoing = calculated; // Default override to calculated first time
